@@ -5,15 +5,24 @@ A lightweight header for connecting to a server that supports the TUS protocol. 
 Current Nuget packages are available here: https://www.nuget.org/packages/Tus.Net.Client/
 
 ## Usage
-It provides the core functionality of the TUS API:
+### Part 1/2: TusProtocol
+You can use the TusProtocol class to access the following requests directly:
+
+#### Core Functionality
 * HEAD: Used to find how much of a file has been uploaded, it returns a header containing the number of bytes that have been uploaded
 * PATCH: Used to upload a piece of a file, sequentially, by stating the start byte (used by getting the response from "HEAD") and the number of bytes to upload with this patch. It automatically adjusts for the last patch to the server.
 * OPTIONS: Used to find out information about the server, for example, the optional methods that have been implemented and the TUS protocol version supported by the server.
 
-It also provides the following extension functionality of the TUS API:
+#### Extension Functionality
 * CREATION: Used to initiate an upload to a server, by sending the total amount of bytes that will be uploaded, and the name of a file. It will return a HttpResponseMessage containing the link of the upload as a header.
 * TERMINATION: Used to delete a partial or full upload. It will return a HttpRequestMessage with a 204 Status Code if successful.
 
+### Part 2/2: TusClient
+You can use the wrapped TusClient to have a higher level of abstraction to a TUS server.
+
+Mor information coming soon.
+
+# Info about TUS
 You can find out more about the TUS protocol here: https://tus.io/
 You can see the protocol here: https://tus.io/protocols/resumable-upload.html
 
