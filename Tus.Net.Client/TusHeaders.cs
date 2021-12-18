@@ -1,3 +1,5 @@
+using System;
+
 namespace Tus.Net.Client
 {
     public static class TusHeaders
@@ -12,7 +14,11 @@ namespace Tus.Net.Client
         public const string UploadOffset = "Upload-Offset";
         public const string UploadChecksum = "Upload-Checksum";
         public const string UploadMetadata = "Upload-Metadata";
+        
+        [Obsolete("Will be removed in the next version")]
         public const string Authorization = "Authorization";
+        
+        [Obsolete("Will be removed in the next version")]
         public const string Host = "Host";
     }
 }
