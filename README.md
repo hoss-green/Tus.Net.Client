@@ -5,7 +5,7 @@ A lightweight header for connecting to a server that supports the TUS protocol. 
 Current Nuget packages are available here: https://www.nuget.org/packages/Tus.Net.Client/
 
 ## Usage
-### Part 1/2: TusProtocol
+### Part 1/3: TusProtocol
 You can use the TusProtocol class to access the following requests directly:
 
 #### Core Functionality
@@ -17,10 +17,50 @@ You can use the TusProtocol class to access the following requests directly:
 * CREATION: Used to initiate an upload to a server, by sending the total amount of bytes that will be uploaded, and the name of a file. It will return a HttpResponseMessage containing the link of the upload as a header.
 * TERMINATION: Used to delete a partial or full upload. It will return a HttpRequestMessage with a 204 Status Code if successful.
 
-### Part 2/2: TusClient
-You can use the wrapped TusClient to have a higher level of abstraction to a TUS server.
 
-Mor information coming soon.
+### Part 3/3: TusFile
+The TusFile is the class that handles uploading of Files to a server using the TUS protocol
+
+#### There is a constructor, which is used to create the Tus File, and there is one method:
+* UploadAsync: Used to be start or resume an ongoing upload, add any server specific headers here.
+
+#### There are three events:
+``` C#
+        /// <summary>
+        /// An error that occurs during file uploading
+        /// </summary>
+        public EventHandler<TusErrorEventArgs> OnError { get; set; }
+        
+        /// <summary>
+        /// An event which occurs when part of the file is successfully patched to the server
+        /// </summary>
+        public EventHandler<TusProgressEventArgs> OnProgress { get; set; }
+        
+        /// <summary>
+        /// An event which occurs when the file has completed uploading
+        /// </summary>
+        public EventHandler<TusSuccessEventArgs> OnSuccess { get; set; }
+```
+
+
+### Part 3/3: TusClient
+You can use the wrapped TusClient to have a higher level of abstraction to a TUS server.
+Supports the following methods:
+``` C#
+    //Used to create a URL endpoint to upload to
+    CreateEndpointAsync(
+            string serverEndPoint,
+            FileInfo fileInfo,
+            Dictionary<string, string> customHeaders,
+            Dictionary<string, string> metadata)....
+    
+    //Gets the upload offset of a particular endpoint
+    GetUploadProgressAsync(string endPoint, Dictionary<string, string> customHeaders)
+
+    //Deletes a file using an endpoint (if supported)
+    DeleteFileAsync(string endPoint, Dictionary<string, string> customHeaders)
+
+```
 
 # Info about TUS
 You can find out more about the TUS protocol here: https://tus.io/
