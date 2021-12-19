@@ -159,7 +159,7 @@ namespace Tus.Net.Client
         /// </summary>
         /// <param name="customHttpHeaders">Any additional headers, authorization etc.</param>
         /// <returns>true if successful</returns>
-        [Obsolete("Will be removed in next 1.x.0 update")]
+        [Obsolete("Will be removed in next 1.x.0 update, please use UploadAsync() instead")]
         public async Task<bool> Upload(Dictionary<string, string> customHttpHeaders = null)
         {
             HttpResponseMessage responseMessage = null;
