@@ -149,6 +149,17 @@ namespace Tus.Net.Client
         /// </summary>
         /// <param name="customHttpHeaders">Any additional headers, authorization etc.</param>
         /// <returns>true if successful</returns>
+        public async Task<bool> UploadAsync(Dictionary<string, string> customHttpHeaders = null)
+        {
+            return await Upload(customHttpHeaders);
+        }
+
+        /// <summary>
+        /// The main function of this file, starts and resumes files based upon the fileName/endPoint given
+        /// </summary>
+        /// <param name="customHttpHeaders">Any additional headers, authorization etc.</param>
+        /// <returns>true if successful</returns>
+        [Obsolete("Will be removed in next 1.x.0 update")]
         public async Task<bool> Upload(Dictionary<string, string> customHttpHeaders = null)
         {
             HttpResponseMessage responseMessage = null;
