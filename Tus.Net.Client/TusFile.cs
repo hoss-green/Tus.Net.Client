@@ -151,7 +151,7 @@ namespace Tus.Net.Client
         /// <returns>true if successful</returns>
         public async Task<bool> UploadAsync(Dictionary<string, string> customHttpHeaders = null)
         {
-            return await UploadAsync(customHttpHeaders);
+            return await Upload(customHttpHeaders);
         }
 
         /// <summary>
