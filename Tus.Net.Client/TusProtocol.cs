@@ -1,6 +1,7 @@
 using System;
 using System.Collections.Generic;
 using System.IO;
+using System.Linq;
 using System.Net.Http;
 using System.Net.Http.Headers;
 using System.Threading;
@@ -231,11 +232,15 @@ namespace Tus.Net.Client
         static HttpRequestMessage BuildRequest(Dictionary<string, string> customHeaders, HttpMethod method, string url)
         {
             HttpRequestMessage requestMessage = new(method, url);
+            if (customHeaders == null || !customHeaders.Any())
+            {
+                return requestMessage;
+            }
+            
             foreach (KeyValuePair<string, string> customHeader in customHeaders)
             {
                 requestMessage.Headers.Add(customHeader.Key, customHeader.Value);
             }
-
             return requestMessage;
         }
     }
