@@ -151,7 +151,7 @@ namespace Tus.Net.Client
         /// <returns>true if successful</returns>
         public async Task<bool> UploadAsync(Dictionary<string, string> customHttpHeaders = null)
         {
-            return await Upload(customHttpHeaders);
+            return await UploadAsync(customHttpHeaders);
         }
 
         /// <summary>
@@ -170,6 +170,13 @@ namespace Tus.Net.Client
                 responseMessage = await protocol.HeadAsync(this.EndPoint, customHttpHeaders);
                 if (!responseMessage.IsSuccessStatusCode || !responseMessage.Headers.Contains(TusHeaders.UploadOffset))
                 {
+                    this.OnError?.Invoke(this, 
+                        new(
+                            this,
+                            responseMessage.ReasonPhrase, 
+                            responseMessage,
+                            responseMessage.StatusCode,
+                            null));
                     return false;
                 }
 
