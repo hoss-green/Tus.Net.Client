@@ -127,7 +127,7 @@ namespace Tus.Net.Client
                 metadataStrings.Add($"{k} {v}");
             }
 
-            requestMessage.Headers.Add(TusHeaders.UploadMetadata, string.Join(", ", metadataStrings.ToArray()).Trim());
+            requestMessage.Headers.Add(TusHeaders.UploadMetadata, string.Join(",", metadataStrings.ToArray()).Trim());
             requestMessage.Headers.Add(TusHeaders.TusResumable, this._tusVersion);
 
             HttpResponseMessage responseMessage = await client.SendAsync(requestMessage);
