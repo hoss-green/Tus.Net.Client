@@ -142,18 +142,7 @@ namespace Tus.Net.Client
             this.FileType = fileType;
             this.FileName = fileName;
         }
-
-
-        /// <summary>
-        /// The main function of this file, starts and resumes files based upon the fileName/endPoint given
-        /// </summary>
-        /// <param name="customHttpHeaders">Any additional headers, authorization etc.</param>
-        /// <returns>true if successful</returns>
-        public async Task<bool> UploadAsync(Dictionary<string, string> customHttpHeaders = null)
-        {
-            return await Upload(customHttpHeaders);
-        }
-
+        
         /// <summary>
         /// The main function of this file, starts and resumes files based upon the fileName/endPoint given
         /// </summary>
@@ -162,11 +151,33 @@ namespace Tus.Net.Client
         [Obsolete("Will be removed in next 1.x.0 update, please use UploadAsync() instead")]
         public async Task<bool> Upload(Dictionary<string, string> customHttpHeaders = null)
         {
+            return await UploadAsync(customHttpHeaders);
+        }
+
+        /// <summary>
+        /// The main function of this file, starts and resumes files based upon the fileName/endPoint given, using default 5Mb chunk size
+        /// </summary>
+        /// <param name="customHttpHeaders">Any additional headers, authorization etc.</param>
+        /// <returns>true if successful</returns>
+        public async Task<bool> UploadAsync(Dictionary<string, string> customHttpHeaders = null)
+        {
+            int chunkSize = (int)Math.Ceiling(5 * 1024.0 * 1024.0); //5mb
+            return await UploadAsync(chunkSize, customHttpHeaders);
+        }
+
+        /// <summary>
+        /// The main function of this file, starts and resumes files based upon the fileName/endPoint given
+        /// </summary>
+        /// <param name="chunkSize">The upload chunk size</param>
+        /// <param name="customHttpHeaders">Any additional headers, authorization etc.</param>
+        /// <returns>true if successful</returns>
+        public async Task<bool> UploadAsync(int chunkSize, Dictionary<string, string> customHttpHeaders = null)
+        {
             HttpResponseMessage responseMessage = null;
             try
             {
                 TusProtocol protocol = new();
-                int chunkSize = (int)Math.Ceiling(5 * 1024.0 * 1024.0); //5mb
+
                 responseMessage = await protocol.HeadAsync(this.EndPoint, customHttpHeaders);
                 if (!responseMessage.IsSuccessStatusCode || !responseMessage.Headers.Contains(TusHeaders.UploadOffset))
                 {
