@@ -1,3 +1,6 @@
+
+[![ko-fi](https://ko-fi.com/img/githubbutton_sm.svg)](https://ko-fi.com/O5O8AGNLW)
+
 # Tus.Net.Client
 A lightweight header for connecting to a server that supports the TUS protocol. This API has two layers, the first layer (included from version 0.0.1) are built using HttpClient and HttpRequestMessage/Response setup.
 
@@ -68,6 +71,8 @@ You can see the protocol here: https://tus.io/protocols/resumable-upload.html
 
 # Tip!
 Always happy to receive donations to help me support my work or buy pizza.
+
+[![ko-fi](https://ko-fi.com/img/githubbutton_sm.svg)](https://ko-fi.com/O5O8AGNLW)
 
 BSC: 0x44ed8E0c45b82d12cAF02f73294fa9AfED48eD80
 
