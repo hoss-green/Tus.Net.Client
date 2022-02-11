@@ -142,27 +142,31 @@ namespace Tus.Net.Client
             this.FileType = fileType;
             this.FileName = fileName;
         }
-        
+
         /// <summary>
         /// The main function of this file, starts and resumes files based upon the fileName/endPoint given
         /// </summary>
         /// <param name="customHttpHeaders">Any additional headers, authorization etc.</param>
+        /// <param name="logRequests">Turn on logging of http requests</param>
+        /// <param name="httpClient">Optional HttpClient to use for sending requests</param>
         /// <returns>true if successful</returns>
         [Obsolete("Will be removed in next 1.x.0 update, please use UploadAsync() instead")]
-        public async Task<bool> Upload(Dictionary<string, string> customHttpHeaders = null)
+        public async Task<bool> Upload(Dictionary<string, string> customHttpHeaders = null, bool logRequests = false, HttpClient httpClient = null)
         {
-            return await UploadAsync(customHttpHeaders);
+            return await UploadAsync(customHttpHeaders, logRequests, httpClient);
         }
 
         /// <summary>
         /// The main function of this file, starts and resumes files based upon the fileName/endPoint given, using default 5Mb chunk size
         /// </summary>
         /// <param name="customHttpHeaders">Any additional headers, authorization etc.</param>
+        /// <param name="logRequests">Turn on logging of http requests</param>
+        /// <param name="httpClient">Optional HttpClient to use for sending requests</param>
         /// <returns>true if successful</returns>
-        public async Task<bool> UploadAsync(Dictionary<string, string> customHttpHeaders = null)
+        public async Task<bool> UploadAsync(Dictionary<string, string> customHttpHeaders = null, bool logRequests = false, HttpClient httpClient = null)
         {
             int chunkSize = (int)Math.Ceiling(5 * 1024.0 * 1024.0); //5mb
-            return await UploadAsync(chunkSize, customHttpHeaders);
+            return await UploadAsync(chunkSize, customHttpHeaders, logRequests, httpClient);
         }
 
         /// <summary>
@@ -170,14 +174,15 @@ namespace Tus.Net.Client
         /// </summary>
         /// <param name="chunkSize">The upload chunk size</param>
         /// <param name="customHttpHeaders">Any additional headers, authorization etc.</param>
+        /// <param name="logRequests">Turn on logging of http requests</param>
+        /// <param name="httpClient">Optional HttpClient to use for sending requests</param>
         /// <returns>true if successful</returns>
-        public async Task<bool> UploadAsync(int chunkSize, Dictionary<string, string> customHttpHeaders = null)
+        public async Task<bool> UploadAsync(int chunkSize, Dictionary<string, string> customHttpHeaders = null, bool logRequests = false, HttpClient httpClient = null)
         {
             HttpResponseMessage responseMessage = null;
             try
             {
-                TusProtocol protocol = new();
-
+                TusProtocol protocol = new(null, logRequests, httpClient);
                 responseMessage = await protocol.HeadAsync(this.EndPoint, customHttpHeaders);
                 if (!responseMessage.IsSuccessStatusCode || !responseMessage.Headers.Contains(TusHeaders.UploadOffset))
                 {

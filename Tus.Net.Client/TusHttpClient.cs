@@ -11,9 +11,18 @@ namespace Tus.Net.Client
     internal class TusHttpClient : HttpClient
     {
         private readonly bool _logRequests;
+        private readonly HttpClient _httpClient;
 
-        public TusHttpClient(bool logRequests)
+        public TusHttpClient(bool logRequests, HttpClient httpClient = null)
         {
+            if (httpClient != null) {
+                _httpClient = httpClient;
+            }
+            else
+            {
+                this._httpClient = HttpClientFactory.Create();
+            }
+            
             this._logRequests = logRequests;
         }
 
@@ -23,7 +32,7 @@ namespace Tus.Net.Client
             {
                 Debug.WriteLine(request.ToString());
             }
-            return base.Send(request, new CancellationToken());
+            return _httpClient.Send(request, new CancellationToken());
         }
 
         public override HttpResponseMessage Send(HttpRequestMessage request, CancellationToken cancellationToken)
@@ -32,7 +41,7 @@ namespace Tus.Net.Client
             {
                 Debug.WriteLine(request.ToString());
             }
-            return base.Send(request, cancellationToken);
+            return _httpClient.Send(request, cancellationToken);
         }
 
         public new async Task<HttpResponseMessage> SendAsync(HttpRequestMessage request)
@@ -41,7 +50,7 @@ namespace Tus.Net.Client
             {
                 Debug.WriteLine(request.ToString());
             }
-            return await base.SendAsync(request, new CancellationToken());
+            return await _httpClient.SendAsync(request, new CancellationToken());
         }
 
         public override Task<HttpResponseMessage> SendAsync(HttpRequestMessage request, CancellationToken cancellationToken)
@@ -50,7 +59,7 @@ namespace Tus.Net.Client
             {
                 Debug.WriteLine(request.ToString());
             }
-            return base.SendAsync(request, cancellationToken);
+            return _httpClient.SendAsync(request, cancellationToken);
         }
     }
 }
