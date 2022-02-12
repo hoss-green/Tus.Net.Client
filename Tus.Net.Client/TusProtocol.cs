@@ -23,7 +23,7 @@ namespace Tus.Net.Client
         /// <param name="httpClient">Optional HttpClient to use for sending requests</param>
         public TusProtocol(string tusVersion = "1.0.0", bool logRequests = false, HttpClient httpClient = null)
         {
-            this._tusVersion = tusVersion;
+            this._tusVersion = string.IsNullOrEmpty(tusVersion) ? "1.0.0" : tusVersion;
             this._logRequests = logRequests;
             this._httpClient = httpClient;
         }
