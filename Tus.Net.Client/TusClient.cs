@@ -20,8 +20,7 @@ namespace Tus.Net.Client
         /// <param name="fileInfo">The FileInfo object representing the file</param>
         /// <param name="customHeaders">Any custom headers, such as authorization for this end point</param>
         /// <param name="metadata">metadata, such as filename, filetype, will be extracted from fileInfo but can be overwritten</param>
-        /// <param name="logRequests">Turn on logging of http requests</param>
-        /// <param name="httpClient">Optional HttpClient to use for sending requests</param>
+        /// <param name="tusOptions">Options to set the HttpClient, Logging and TUSVersion</param>
         /// <returns>A TusCreatedResponse if successful</returns>
         public static async Task<TusCreatedResponse> CreateEndpointAsync(
             string serverEndPoint,
@@ -42,8 +41,7 @@ namespace Tus.Net.Client
         /// <param name="fileType">The extension/type of the file</param>
         /// <param name="customHeaders">Any custom headers, such as authorization for this end point</param>
         /// <param name="metadata">metadata, such as filename, filetype, will be extracted from fileInfo but can be overwritten</param>
-        /// <param name="logRequests">Turn on logging of http requests</param>
-        /// <param name="httpClient">Optional HttpClient to use for sending requests</param>
+        /// <param name="tusOptions">Options to set the HttpClient, Logging and TUSVersion</param>
         /// <returns>A TusCreatedResponse if successful</returns>
         public static async Task<TusCreatedResponse> CreateEndpointAsync(
             string serverEndPoint,
@@ -78,8 +76,7 @@ namespace Tus.Net.Client
         /// </summary>
         /// <param name="endPoint">The location of the file to delete</param>
         /// <param name="customHeaders">Any additional headers specific to this implementation, such as Authorization</param>
-        /// <param name="logRequests">Turn on logging of http requests</param>
-        /// <param name="httpClient">Optional HttpClient to use for sending requests</param>
+        /// <param name="tusOptions">Options to set the HttpClient, Logging and TUSVersion</param>
         /// <returns>A Tus Head response containing the current number of bytes uploaded for a specific tus file</returns>
         public static async Task<TusHeadResponse> GetUploadProgressAsync(
             string endPoint, 
