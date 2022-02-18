@@ -6,7 +6,6 @@ using System.Net;
 using System.Net.Http;
 using System.Threading.Tasks;
 using Tus.Net.Client.Responses;
-using Tus.Net.Client.TusEventArgs;
 
 namespace Tus.Net.Client
 {
@@ -29,10 +28,9 @@ namespace Tus.Net.Client
             FileInfo fileInfo,
             Dictionary<string, string> customHeaders,
             Dictionary<string, string> metadata,
-            bool logRequests = false, 
-            HttpClient httpClient = null)
+            TusOptions tusOptions = null)
         {
-            return await CreateEndpointAsync(serverEndPoint, fileInfo.Length, fileInfo.Name, fileInfo.Extension, customHeaders, metadata, logRequests, httpClient);
+            return await CreateEndpointAsync(serverEndPoint, fileInfo.Length, fileInfo.Name, fileInfo.Extension, customHeaders, metadata, tusOptions);
         }
 
         /// <summary>
@@ -54,13 +52,12 @@ namespace Tus.Net.Client
             string fileType,
             Dictionary<string, string> customHeaders,
             Dictionary<string, string> metadata,
-            bool logRequests = false,
-            HttpClient httpClient = null)
+            TusOptions tusOptions = null)
             
         {
             try
             {
-                TusProtocol protocol = new(null, logRequests, httpClient);
+                TusProtocol protocol = new(tusOptions);
                 HttpResponseMessage responseMessage = await protocol.CreateAsync(serverEndPoint, fileSize, fileName, fileType, customHeaders, metadata);
                 Uri uri = responseMessage.Headers.Location;
                 return new(responseMessage, responseMessage.StatusCode == HttpStatusCode.Created, uri?.ToString());
@@ -87,12 +84,11 @@ namespace Tus.Net.Client
         public static async Task<TusHeadResponse> GetUploadProgressAsync(
             string endPoint, 
             Dictionary<string, string> customHeaders, 
-            bool logRequests = false,
-            HttpClient httpClient = null)
+            TusOptions tusOptions = null)
         {
             try
             {
-                TusProtocol protocol = new(null, logRequests, httpClient);
+                TusProtocol protocol = new(tusOptions);
                 HttpResponseMessage responseMessage = await protocol.HeadAsync(endPoint, customHeaders);
                 long? uploadOffset = null;
                 if (responseMessage.Headers.Contains(TusHeaders.UploadOffset) &&
@@ -118,16 +114,13 @@ namespace Tus.Net.Client
         /// </summary>
         /// <param name="endPoint">The location of the file to be deleted</param>
         /// <param name="customHeaders">Any additional headers specific to this implementation, such as Authorization</param>
-        /// <param name="logRequests">Turn on logging of http requests</param>
-        /// <param name="httpClient">Optional HttpClient to use for sending requests</param>
         /// <returns></returns>
         public static async Task<TusDeleteResponse> DeleteFileAsync(
             string endPoint, 
             Dictionary<string, string> customHeaders, 
-            bool logRequests = false, 
-            HttpClient httpClient = null)
+            TusOptions tusOptions = null)
         {
-            TusProtocol protocol = new(null, logRequests, httpClient);
+            TusProtocol protocol = new(tusOptions);
             HttpResponseMessage responseMessage = await protocol.DeleteAsync(endPoint, customHeaders);
             bool deleted = responseMessage.StatusCode is HttpStatusCode.NoContent or HttpStatusCode.NotFound or HttpStatusCode.Gone;
             return new(responseMessage, deleted);

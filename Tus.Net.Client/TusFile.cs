@@ -18,42 +18,42 @@ namespace Tus.Net.Client
         /// The stream of the file
         /// </summary>
         public FileStream FileStream { get; private set; }
-        
+
         /// <summary>
         /// The name of this file
         /// </summary>
         public string FileName { get; private set; }
-        
+
         /// <summary>
         /// The size of the file, in bytes
         /// </summary>
         public long FileSize { get; private set; }
-        
+
         /// <summary>
         /// The type of the file to be uploaded
         /// </summary>
         public string FileType { get; private set; }
-        
+
         /// <summary>
         /// Where this file will be uploaded to
         /// </summary>
         public string EndPoint { get; private set; }
-        
+
         /// <summary>
         /// Metadata such as filename and filetype
         /// </summary>
         public Dictionary<string, string> MetaData { get; private set; }
-        
+
         /// <summary>
         /// An error that occurs during file uploading
         /// </summary>
         public EventHandler<TusErrorEventArgs> OnError { get; set; }
-        
+
         /// <summary>
         /// An event which occurs when part of the file is successfully patched to the server
         /// </summary>
         public EventHandler<TusProgressEventArgs> OnProgress { get; set; }
-        
+
         /// <summary>
         /// An event which occurs when the file has completed uploading
         /// </summary>
@@ -119,8 +119,8 @@ namespace Tus.Net.Client
         {
             Create(fileStream, fileName, fileSize, fileType, endPoint, metaData, onError, onProgress, onSuccess);
         }
-        
-        
+
+
         private void Create(
             FileStream fileStream,
             string fileName,
@@ -147,26 +147,24 @@ namespace Tus.Net.Client
         /// The main function of this file, starts and resumes files based upon the fileName/endPoint given
         /// </summary>
         /// <param name="customHttpHeaders">Any additional headers, authorization etc.</param>
-        /// <param name="logRequests">Turn on logging of http requests</param>
-        /// <param name="httpClient">Optional HttpClient to use for sending requests</param>
+        /// <param name="tusOptions">Options to set the HttpClient, Logging and TUSVersion</param>
         /// <returns>true if successful</returns>
         [Obsolete("Will be removed in next 1.x.0 update, please use UploadAsync() instead")]
-        public async Task<bool> Upload(Dictionary<string, string> customHttpHeaders = null, bool logRequests = false, HttpClient httpClient = null)
+        public async Task<bool> Upload(Dictionary<string, string> customHttpHeaders = null, TusOptions tusOptions = null)
         {
-            return await UploadAsync(customHttpHeaders, logRequests, httpClient);
+            return await UploadAsync(customHttpHeaders, tusOptions);
         }
 
         /// <summary>
         /// The main function of this file, starts and resumes files based upon the fileName/endPoint given, using default 5Mb chunk size
         /// </summary>
         /// <param name="customHttpHeaders">Any additional headers, authorization etc.</param>
-        /// <param name="logRequests">Turn on logging of http requests</param>
-        /// <param name="httpClient">Optional HttpClient to use for sending requests</param>
+        /// <param name="tusOptions">Options to set the HttpClient, Logging and TUSVersion</param>
         /// <returns>true if successful</returns>
-        public async Task<bool> UploadAsync(Dictionary<string, string> customHttpHeaders = null, bool logRequests = false, HttpClient httpClient = null)
+        public async Task<bool> UploadAsync(Dictionary<string, string> customHttpHeaders = null, TusOptions tusOptions = null)
         {
             int chunkSize = (int)Math.Ceiling(5 * 1024.0 * 1024.0); //5mb
-            return await UploadAsync(chunkSize, customHttpHeaders, logRequests, httpClient);
+            return await UploadAsync(chunkSize, customHttpHeaders, tusOptions);
         }
 
         /// <summary>
@@ -174,22 +172,21 @@ namespace Tus.Net.Client
         /// </summary>
         /// <param name="chunkSize">The upload chunk size</param>
         /// <param name="customHttpHeaders">Any additional headers, authorization etc.</param>
-        /// <param name="logRequests">Turn on logging of http requests</param>
-        /// <param name="httpClient">Optional HttpClient to use for sending requests</param>
+        /// <param name="tusOptions">Options to set the HttpClient, Logging and TUSVersion</param>
         /// <returns>true if successful</returns>
-        public async Task<bool> UploadAsync(int chunkSize, Dictionary<string, string> customHttpHeaders = null, bool logRequests = false, HttpClient httpClient = null)
+        public async Task<bool> UploadAsync(int chunkSize, Dictionary<string, string> customHttpHeaders = null, TusOptions tusOptions = null)
         {
             HttpResponseMessage responseMessage = null;
             try
             {
-                TusProtocol protocol = new(null, logRequests, httpClient);
+                TusProtocol protocol = new(tusOptions);
                 responseMessage = await protocol.HeadAsync(this.EndPoint, customHttpHeaders);
                 if (!responseMessage.IsSuccessStatusCode || !responseMessage.Headers.Contains(TusHeaders.UploadOffset))
                 {
-                    this.OnError?.Invoke(this, 
+                    this.OnError?.Invoke(this,
                         new(
                             this,
-                            responseMessage.ReasonPhrase, 
+                            responseMessage.ReasonPhrase,
                             responseMessage,
                             responseMessage.StatusCode,
                             null));

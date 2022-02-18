@@ -4,28 +4,20 @@ using System.IO;
 using System.Linq;
 using System.Net.Http;
 using System.Net.Http.Headers;
-using System.Threading;
 using System.Threading.Tasks;
 
 namespace Tus.Net.Client
 {
     public sealed class TusProtocol
     {
-        private readonly bool _logRequests;
-        private readonly HttpClient _httpClient;
-        private readonly string _tusVersion;
-
+        private readonly TusOptions _tusOptions;
         /// <summary>
         /// Instantiates this TUS connector
         /// </summary>
-        /// <param name="tusVersion">The version of the protocol, defaults to 1.0.0</param>
-        /// <param name="logRequests">Turn on logging of http requests</param>
-        /// <param name="httpClient">Optional HttpClient to use for sending requests</param>
-        public TusProtocol(string tusVersion = "1.0.0", bool logRequests = false, HttpClient httpClient = null)
+        /// <param name="tusOptions">Options to set the HttpClient, Logging and TUSVersion</param>
+        public TusProtocol(TusOptions tusOptions)
         {
-            this._tusVersion = string.IsNullOrEmpty(tusVersion) ? "1.0.0" : tusVersion;
-            this._logRequests = logRequests;
-            this._httpClient = httpClient;
+            this._tusOptions = tusOptions ?? new TusOptions();
         }
 
         /// <summary>
@@ -38,9 +30,9 @@ namespace Tus.Net.Client
         {
             try
             {
-                TusHttpClient client = new(this._logRequests, this._httpClient);
+                TusHttpClient client = new(this._tusOptions);
                 HttpRequestMessage requestMessage = BuildRequest(customHeaders, HttpMethod.Head, url);
-                requestMessage.Headers.Add(TusHeaders.TusResumable, this._tusVersion);
+                requestMessage.Headers.Add(TusHeaders.TusResumable, this._tusOptions.TusVersion);
                 HttpResponseMessage responseMessage = await client.SendAsync(requestMessage);
                 return responseMessage;
             }
@@ -113,7 +105,7 @@ namespace Tus.Net.Client
             Dictionary<string, string> customHeaders = null,
             Dictionary<string, string> metadata = null)
         {
-            TusHttpClient client = new(this._logRequests, this._httpClient);
+            TusHttpClient client = new(this._tusOptions);
             HttpRequestMessage requestMessage = BuildRequest(customHeaders, HttpMethod.Post, url);
 
             requestMessage.Content = new StringContent("");
@@ -131,7 +123,7 @@ namespace Tus.Net.Client
             }
 
             requestMessage.Headers.Add(TusHeaders.UploadMetadata, string.Join(",", metadataStrings.ToArray()).Trim());
-            requestMessage.Headers.Add(TusHeaders.TusResumable, this._tusVersion);
+            requestMessage.Headers.Add(TusHeaders.TusResumable, this._tusOptions.TusVersion);
 
             HttpResponseMessage responseMessage = await client.SendAsync(requestMessage);
             return responseMessage;
@@ -168,7 +160,7 @@ namespace Tus.Net.Client
         {
             try
             {
-                TusHttpClient client = new(this._logRequests, this._httpClient);
+                TusHttpClient client = new(this._tusOptions);
                 System.Security.Cryptography.SHA1 sha = new System.Security.Cryptography.SHA1Managed();
 
                 fs.Seek(offset, SeekOrigin.Begin);
@@ -180,7 +172,7 @@ namespace Tus.Net.Client
 
                 byte[] sha1Hash = sha.ComputeHash(buffer);
                 HttpRequestMessage requestMessage = BuildRequest(customHeaders, HttpMethod.Patch, url);
-                requestMessage.Headers.Add(TusHeaders.TusResumable, this._tusVersion);
+                requestMessage.Headers.Add(TusHeaders.TusResumable, this._tusOptions.TusVersion);
                 requestMessage.Headers.Add(TusHeaders.UploadOffset, $"{offset}");
                 requestMessage.Headers.Add(TusHeaders.UploadChecksum, "sha1 " + Convert.ToBase64String(sha1Hash));
                 requestMessage.Content = new ByteArrayContent(buffer);
@@ -204,7 +196,7 @@ namespace Tus.Net.Client
         /// <returns></returns>
         public async Task<HttpResponseMessage> OptionsAsync(string url, Dictionary<string, string> customHeaders = null)
         {
-            TusHttpClient client = new(this._logRequests, this._httpClient);
+            TusHttpClient client = new(this._tusOptions);
             HttpRequestMessage requestMessage = BuildRequest(customHeaders, HttpMethod.Options, url);
             return await client.SendAsync(requestMessage);
         }
@@ -217,9 +209,9 @@ namespace Tus.Net.Client
         /// <returns></returns>
         public async Task<HttpResponseMessage> DeleteAsync(string url, Dictionary<string, string> customHeaders = null)
         {
-            TusHttpClient client = new(this._logRequests, this._httpClient);
+            TusHttpClient client = new(this._tusOptions);
             HttpRequestMessage requestMessage = BuildRequest(customHeaders, HttpMethod.Delete, url);
-            requestMessage.Headers.Add(TusHeaders.TusResumable, this._tusVersion);
+            requestMessage.Headers.Add(TusHeaders.TusResumable, this._tusOptions.TusVersion);
 
             return await client.SendAsync(requestMessage);
         }
