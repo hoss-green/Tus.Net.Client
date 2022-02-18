@@ -1,4 +1,6 @@
+using System;
 using System.Diagnostics;
+using System.Diagnostics.CodeAnalysis;
 using System.Net.Http;
 using System.Threading;
 using System.Threading.Tasks;
@@ -11,20 +13,13 @@ namespace Tus.Net.Client
     internal class TusHttpClient : HttpClient
     {
         private readonly TusOptions _tusOptions;
-        // private readonly bool _logRequests;
-        // private readonly HttpClient _httpClient;
 
-        public TusHttpClient(TusOptions tusOptions)
+        internal TusHttpClient(TusOptions tusOptions)
         {
-            this._tusOptions = tusOptions ?? new TusOptions();
-            this._tusOptions.HttpClient = tusOptions?.HttpClient ?? HttpClientFactory.Create();
-            
-            // if (this._tusOptions.HttpClient == null)
-            // {
-            //     this._httpClient = HttpClientFactory.Create();
-            // }
+            this._tusOptions = tusOptions;
         }
 
+        [Obsolete("Will remove all non-async methods in next major version")]
         public new HttpResponseMessage Send(HttpRequestMessage request)
         {
             if (this._tusOptions.LogRequests)
@@ -34,6 +29,7 @@ namespace Tus.Net.Client
             return this._tusOptions.HttpClient.Send(request, new CancellationToken());
         }
 
+        [Obsolete("Will remove all non-async methods in next major version")]
         public override HttpResponseMessage Send(HttpRequestMessage request, CancellationToken cancellationToken)
         {
             if (this._tusOptions.LogRequests)

@@ -111,7 +111,8 @@ namespace Tus.Net.Client
         /// </summary>
         /// <param name="endPoint">The location of the file to be deleted</param>
         /// <param name="customHeaders">Any additional headers specific to this implementation, such as Authorization</param>
-        /// <returns></returns>
+        /// <param name="tusOptions">Options to set the HttpClient, Logging and TUSVersion</param>
+        /// <returns>A Tus Deleted response</returns>
         public static async Task<TusDeleteResponse> DeleteFileAsync(
             string endPoint, 
             Dictionary<string, string> customHeaders, 

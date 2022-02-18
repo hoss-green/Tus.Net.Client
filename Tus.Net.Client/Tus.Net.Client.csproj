@@ -2,12 +2,12 @@
 
     <PropertyGroup>
         <PackageId>Tus.Net.Client</PackageId>
-        <Version>1.0.6</Version>
+        <Version>2.0.0</Version>
         <Authors>Hossyposs</Authors>
         <PackageDescription>Lightweight wrapper for the TUS Protocol</PackageDescription>
         <RepositoryUrl>https://github.com/hossyposs/Tus.Net.Client</RepositoryUrl>
         <PackageLicenseExpression>MIT</PackageLicenseExpression>
-        <PackageVersion>1.0.6</PackageVersion>
+        <PackageVersion>2.0.0</PackageVersion>
         <TargetFramework>net5.0</TargetFramework>
     </PropertyGroup>
 

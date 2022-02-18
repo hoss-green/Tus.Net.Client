@@ -14,10 +14,11 @@ namespace Tus.Net.Client
         /// <summary>
         /// Instantiates this TUS connector
         /// </summary>
-        /// <param name="tusOptions">Options to set the HttpClient, Logging and TUSVersion</param>
-        public TusProtocol(TusOptions tusOptions)
+        /// <param name="tusOptions">Options to set the HttpClient, Logging and TUSVersion, if null, default params are used</param>
+        public TusProtocol(TusOptions tusOptions = null)
         {
             this._tusOptions = tusOptions ?? new TusOptions();
+            this._tusOptions.HttpClient = tusOptions?.HttpClient ?? HttpClientFactory.Create();
         }
 
         /// <summary>

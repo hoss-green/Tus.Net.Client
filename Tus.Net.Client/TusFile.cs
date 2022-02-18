@@ -142,19 +142,7 @@ namespace Tus.Net.Client
             this.FileType = fileType;
             this.FileName = fileName;
         }
-
-        /// <summary>
-        /// The main function of this file, starts and resumes files based upon the fileName/endPoint given
-        /// </summary>
-        /// <param name="customHttpHeaders">Any additional headers, authorization etc.</param>
-        /// <param name="tusOptions">Options to set the HttpClient, Logging and TUSVersion</param>
-        /// <returns>true if successful</returns>
-        [Obsolete("Will be removed in next 1.x.0 update, please use UploadAsync() instead")]
-        public async Task<bool> Upload(Dictionary<string, string> customHttpHeaders = null, TusOptions tusOptions = null)
-        {
-            return await UploadAsync(customHttpHeaders, tusOptions);
-        }
-
+        
         /// <summary>
         /// The main function of this file, starts and resumes files based upon the fileName/endPoint given, using default 5Mb chunk size
         /// </summary>
